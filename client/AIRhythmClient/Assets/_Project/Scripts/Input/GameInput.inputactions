@@ -1,0 +1,35 @@
+{
+    "version": 1,
+    "name": "GameInput",
+    "maps": [
+        {
+            "name": "GamePlay",
+            "id": "30a5c0f5-5269-4afa-bbaf-20a376e1656f",
+            "actions": [
+                {
+                    "name": "Hit",
+                    "type": "Button",
+                    "id": "97954564-d5eb-4057-929a-9e1d50799433",
+                    "expectedControlType": "",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                }
+            ],
+            "bindings": [
+                {
+                    "name": "",
+                    "id": "f42e1a68-b370-40d8-b2bf-b21954926322",
+                    "path": "<Keyboard>/space",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Hit",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                }
+            ]
+        }
+    ],
+    "controlSchemes": []
+}
