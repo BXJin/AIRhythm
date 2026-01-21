@@ -6,7 +6,7 @@ public class InputTest : MonoBehaviour
 
     public void OnHit()
     {
-        Debug.Log($"Hit{hitCount++} detected!");
+        //Debug.Log($"Hit{hitCount++} detected!");
     }
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created

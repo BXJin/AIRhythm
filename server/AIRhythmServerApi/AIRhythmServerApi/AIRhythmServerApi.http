@@ -1,0 +1,6 @@
+@AIRhythmServerApi_HostAddress = http://localhost:5192
+
+GET {{AIRhythmServerApi_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
