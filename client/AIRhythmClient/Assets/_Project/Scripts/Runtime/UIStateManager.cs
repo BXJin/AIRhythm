@@ -16,6 +16,7 @@ public class UIStateManager : MonoBehaviour
     [SerializeField] private GameObject hudPanel;
     [SerializeField] private GameObject pauseOverlay;
     [SerializeField] private GameObject resultPanel;
+    [SerializeField] private GameObject serverPanel;
 
     private UIState _currentState = UIState.None;
 
@@ -36,12 +37,14 @@ public class UIStateManager : MonoBehaviour
         if (hudPanel != null) hudPanel.SetActive(false);
         if (pauseOverlay != null) pauseOverlay.SetActive(false);
         if (resultPanel != null) resultPanel.SetActive(false);
+        if (serverPanel != null) serverPanel.SetActive(false);
 
         // 상태별로 필요한 패널만 켜기
         switch (newState)
         {
             case UIState.ChartSelect:
                 if (selectPanel != null) selectPanel.SetActive(true);
+                if (serverPanel != null) serverPanel.SetActive(true);
                 Time.timeScale = 1f;
                 AudioListener.pause = false;
                 break;

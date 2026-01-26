@@ -1,3 +1,4 @@
+using ChartModels;
 using System;
 using System.IO;
 using UnityEngine;
@@ -114,6 +115,78 @@ public class DownloadChartService : MonoBehaviour
             File.WriteAllBytes(audioPath, bytes);
             Debug.Log($"[Download] Audio saved: {audioPath}");
         }
+
+        onOk?.Invoke();
+    }
+
+    /// <summary>
+    /// chartId만으로 차트(JSON)와 오디오를 내려받아 persistent에 저장.
+    /// - 차트를 먼저 받아서 JSON에서 audio.file을 파싱한 다음, 오디오 파일명을 그에 맞춰 저장한다.
+    /// </summary>
+    public void DownloadByChartId(string chartId, Action onOk, Action<string> onFail)
+    {
+        StartCoroutine(DownloadByChartIdCo(chartId, onOk, onFail));
+    }
+
+    private System.Collections.IEnumerator DownloadByChartIdCo(string chartId, Action onOk, Action<string> onFail)
+    {
+        EnsureDirs();
+
+        if (string.IsNullOrWhiteSpace(chartId))
+        {
+            onFail?.Invoke("[DownloadByChartId] chartId is empty.");
+            yield break;
+        }
+
+        // 1) chart json
+        string chartUrl = $"{_baseUrl}/api/charts/{chartId}/chart";
+        string chartText;
+
+        using (var req = UnityWebRequest.Get(chartUrl))
+        {
+            yield return req.SendWebRequest();
+            if (req.result != UnityWebRequest.Result.Success)
+            {
+                onFail?.Invoke($"[Download Chart] Failed: {req.error}\n{chartUrl}");
+                yield break;
+            }
+            chartText = req.downloadHandler.text;
+        }
+
+        // JSON 파싱해서 audio.file 얻기
+        var dto = JsonUtility.FromJson<ChartDto>(chartText);
+        if (dto == null || dto.audio == null || string.IsNullOrWhiteSpace(dto.audio.file))
+        {
+            onFail?.Invoke("[DownloadByChartId] invalid chart json (audio.file missing).");
+            yield break;
+        }
+
+        // 저장: 차트 파일명은 chartId.json(단순)
+        string chartPath = Path.Combine(ChartsDir, $"{chartId}.json");
+        File.WriteAllText(chartPath, chartText);
+        Debug.Log($"[Download] Chart saved: {chartPath}");
+
+        // 2) audio binary
+        string audioUrl = $"{_baseUrl}/api/charts/{chartId}/audio";
+        byte[] audioBytes;
+
+        using (var req = UnityWebRequest.Get(audioUrl))
+        {
+            yield return req.SendWebRequest();
+            if (req.result != UnityWebRequest.Result.Success)
+            {
+                onFail?.Invoke($"[Download Audio] Failed: {req.error}\n{audioUrl}");
+                yield break;
+            }
+            audioBytes = req.downloadHandler.data;
+        }
+
+        // audio.file 예: "Audio/abc123.mp3" → 파일명만 추출해서 저장
+        string audioFileName = Path.GetFileName(dto.audio.file);
+        string audioPath = Path.Combine(AudioDir, audioFileName);
+
+        File.WriteAllBytes(audioPath, audioBytes);
+        Debug.Log($"[Download] Audio saved: {audioPath}");
 
         onOk?.Invoke();
     }
