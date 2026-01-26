@@ -22,8 +22,11 @@ public class PlayStats
             if (TotalNotesJudged <= 0) return 0f;
 
             // 가중치(임시): Perfect 1.0, Great 0.8, Good 0.5, Miss 0
-            float sum = Perfect * 1.0f + Great * 0.8f + Good * 0.5f;
-            return sum / TotalNotesJudged;
+            //float sum = Perfect * 1.0f + Great * 0.8f + Good * 0.5f;
+            //return sum / TotalNotesJudged;
+
+            int hitNotes = Perfect + Great + Good;
+            return (float)hitNotes / TotalNotesJudged;
         }
     }
 

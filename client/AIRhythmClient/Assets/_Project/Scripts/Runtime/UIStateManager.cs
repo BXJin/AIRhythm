@@ -66,7 +66,6 @@ public class UIStateManager : MonoBehaviour
                 AudioListener.pause = true;
                 break;
         }
-
         Debug.Log($"[UIStateManager] State changed to: {newState}");
     }
 

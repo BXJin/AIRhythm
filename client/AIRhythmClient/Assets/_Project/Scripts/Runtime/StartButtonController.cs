@@ -5,10 +5,11 @@ public class StartButtonController : MonoBehaviour
 {
     [Header("Refs")]
     [SerializeField] private ChartLoader chartLoader;
+    [SerializeField] private AudioLoader audioLoader;
     [SerializeField] private SongConductor conductor;
     [SerializeField] private NoteCursor cursor;
     [SerializeField] private PlaySessionController playSession;
-    
+
     [Header("UI")]
     [SerializeField] private TMP_Dropdown chartDropdown;
     [SerializeField] private UIStateManager uiStateManager; //추가
@@ -21,41 +22,36 @@ public class StartButtonController : MonoBehaviour
             Debug.LogError("[StartButtonController] Dropdown is empty.");
             return;
         }
+        string entry = chartDropdown.options[chartDropdown.value].text;
+        if (!chartLoader.LoadByEntry(entry)) return;
 
-        // 1) 선택된 파일명 가져오기
-        string fileName = chartDropdown.options[chartDropdown.value].text;
+        var chart = chartLoader.Loaded;
+        if (chart == null) return;
 
-        // 2) 차트 로드
-        if (chartLoader == null || !chartLoader.LoadByFileName(fileName))
-        {
-            Debug.LogError($"[StartButtonController] Failed to load chart: {fileName}");
-            return;
-        }
-
-        // 3) 준비 단계
-        if (playSession != null)
-        {
-            playSession.ApplyChartAndPrepare();
-        }
-        else
-        {
-            var chart = chartLoader.Loaded;
-            if (chart == null)
+        // (1) 오디오 먼저 로드
+        audioLoader.LoadForChart(
+            chart,
+            onOk: clip =>
             {
-                Debug.LogError("[StartButtonController] Loaded chart is null.");
-                return;
+                // (2) 준비(오프셋/커서/스탯 등)
+                conductor.SetClip(clip);
+                if (cursor != null) cursor.ResetCursor();
+                conductor.SetChartOffsetMs(chart.audio.audio_offset_ms);
+
+                playSession?.ApplyChartAndPrepare();
+
+                // (3) UI 상태 변경(너 UIStateManager 쓰면)
+                uiStateManager.ShowPlaying();
+
+                // (4) 시작
+                conductor.StartSong();
+            },
+            onFail: err =>
+            {
+                Debug.LogError(err);
+                // 실패 시 UI를 ChartSelect로 되돌리고 싶으면 여기서 state 변경
+                uiStateManager?.SetState(UIState.ChartSelect);
             }
-
-            if (cursor != null) cursor.ResetCursor();
-            if (conductor != null) conductor.SetChartOffsetMs(chart.audio.audio_offset_ms);
-        }
-
-        // 4) UI 전환 
-        if (uiStateManager != null) 
-            uiStateManager.ShowPlaying();
-
-        // 5) 시작
-        if (conductor != null) 
-            conductor.StartSong();
+        );
     }
 }

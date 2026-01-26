@@ -62,6 +62,18 @@ public class SongConductor : MonoBehaviour
             _started = true;
     }
 
+    public void SetClip(AudioClip clip)
+    {
+        if (musicSource == null)
+        {
+            Debug.LogError("[SongConductor] musicSource is missing.");
+            return;
+        }
+        musicSource.clip = clip;
+    }
+
+    public AudioClip CurrentClip => musicSource != null ? musicSource.clip : null;
+
     /// <summary>
     /// 음악을 dspTime 기준으로 예약 재생한다.
     /// Phase 1에서는 "클립 1개를 한 번 재생"하는 MVP 용도.
