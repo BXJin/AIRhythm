@@ -1,3 +1,7 @@
+using Microsoft.Extensions.Options;
+using AIRhythmServerApi.Services;
+using AIRhythmServerApi.Stores;
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
@@ -6,7 +10,25 @@ builder.Services.AddControllers();
 // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
 builder.Services.AddOpenApi();
 
+// Storage Options
+builder.Services.Configure<StorageOptions>(builder.Configuration.GetSection("Storage"));
+builder.Services.AddSingleton<StorageInitializer>();
+
+// Stores
+builder.Services.AddSingleton<IJobStore, InMemoryJobStore>();
+builder.Services.AddSingleton<IChartStore, InMemoryChartStore>();
+
+// Queue + Worker
+builder.Services.AddSingleton<IJobQueue, InMemoryJobQueue>();
+builder.Services.AddHostedService<JobWorkerService>();
+
 var app = builder.Build();
+
+using (var scope = app.Services.CreateScope())
+{
+    var initializer = scope.ServiceProvider.GetRequiredService<StorageInitializer>();
+    initializer.EnsureDirectories();
+}
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())

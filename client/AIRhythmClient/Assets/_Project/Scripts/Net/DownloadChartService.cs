@@ -109,7 +109,7 @@ public class DownloadChartService : MonoBehaviour
             byte[] bytes = req.downloadHandler.data;
 
             // 저장 파일명: 서버 제공 audioFile 사용(없으면 id.mp3)
-            string audioName = string.IsNullOrWhiteSpace(item.audioFile) ? $"{item.id}.mp3" : item.audioFile;
+            string audioName = string.IsNullOrWhiteSpace(item.audioFile) ? $"{item.id}.wav" : item.audioFile;
             string audioPath = Path.Combine(AudioDir, audioName);
 
             File.WriteAllBytes(audioPath, bytes);

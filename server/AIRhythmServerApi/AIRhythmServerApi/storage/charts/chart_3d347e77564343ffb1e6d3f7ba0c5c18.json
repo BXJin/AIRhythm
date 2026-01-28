@@ -1,0 +1,21 @@
+{
+  "chart_version": "1.0",
+  "song_id": "chart_3d347e77564343ffb1e6d3f7ba0c5c18",
+  "audio": {
+    "file": "Audio/chart_3d347e77564343ffb1e6d3f7ba0c5c18.wav",
+    "audio_offset_ms": 0,
+    "duration_ms": 15000
+  },
+  "difficulty": "dev",
+  "notes": [
+    {
+      "t_ms": 0
+    },
+    {
+      "t_ms": 500
+    },
+    {
+      "t_ms": 1000
+    }
+  ]
+}
