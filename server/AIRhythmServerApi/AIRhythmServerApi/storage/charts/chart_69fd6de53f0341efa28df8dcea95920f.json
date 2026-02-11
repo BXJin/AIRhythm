@@ -1,0 +1,60 @@
+{
+  "chart_version": "1.0",
+  "song_id": "chart_69fd6de53f0341efa28df8dcea95920f",
+  "audio": {
+    "file": "Audio/chart_69fd6de53f0341efa28df8dcea95920f.wav",
+    "audio_offset_ms": 0,
+    "duration_ms": 8000
+  },
+  "difficulty": "dev",
+  "notes": [
+    {
+      "t_ms": 0
+    },
+    {
+      "t_ms": 500
+    },
+    {
+      "t_ms": 1000
+    },
+    {
+      "t_ms": 1500
+    },
+    {
+      "t_ms": 2000
+    },
+    {
+      "t_ms": 2500
+    },
+    {
+      "t_ms": 3000
+    },
+    {
+      "t_ms": 3500
+    },
+    {
+      "t_ms": 4000
+    },
+    {
+      "t_ms": 4500
+    },
+    {
+      "t_ms": 5000
+    },
+    {
+      "t_ms": 5500
+    },
+    {
+      "t_ms": 6000
+    },
+    {
+      "t_ms": 6500
+    },
+    {
+      "t_ms": 7000
+    },
+    {
+      "t_ms": 7500
+    }
+  ]
+}

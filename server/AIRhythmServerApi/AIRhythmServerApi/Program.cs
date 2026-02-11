@@ -1,6 +1,7 @@
-using Microsoft.Extensions.Options;
+using AIRhythmServerApi.Models;
 using AIRhythmServerApi.Services;
 using AIRhythmServerApi.Stores;
+using Microsoft.Extensions.Options;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -21,6 +22,8 @@ builder.Services.AddSingleton<IChartStore, InMemoryChartStore>();
 // Queue + Worker
 builder.Services.AddSingleton<IJobQueue, InMemoryJobQueue>();
 builder.Services.AddHostedService<JobWorkerService>();
+builder.Services.AddSingleton<WorkerRunner>();
+builder.Services.Configure<WorkerOptions>(builder.Configuration.GetSection("Worker"));
 
 var app = builder.Build();
 

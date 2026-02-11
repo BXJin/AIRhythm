@@ -28,6 +28,12 @@ public class ServerGeneratePanelUI : MonoBehaviour
 
     private void Start()
     {
+        if (genreDropdown != null && genreDropdown.options.Count > 0)
+        {
+            genreDropdown.value = 0;
+            genreDropdown.RefreshShownValue();
+        }
+
         SetIdleUi();
         SetStatus("Ready.");
     }
