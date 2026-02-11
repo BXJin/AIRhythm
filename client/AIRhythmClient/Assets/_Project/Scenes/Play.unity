@@ -1800,6 +1800,7 @@ MonoBehaviour:
   hudPanel: {fileID: 452493861}
   pauseOverlay: {fileID: 1835626587}
   resultPanel: {fileID: 908413643}
+  serverPanel: {fileID: 1597466662}
 --- !u!4 &599081846
 Transform:
   m_ObjectHideFlags: 0
@@ -2654,7 +2655,7 @@ MonoBehaviour:
   previewButton: {fileID: 1730973907}
   downloadButton: {fileID: 1105065590}
   statusText: {fileID: 1358734037}
-  previewSource: {fileID: 0}
+  previewSource: {fileID: 1381929254}
 --- !u!1 &806036866
 GameObject:
   m_ObjectHideFlags: 0
@@ -7907,7 +7908,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::StartButtonController
   chartLoader: {fileID: 2025432071}
-  audioLoader: {fileID: 0}
+  audioLoader: {fileID: 2025432074}
   conductor: {fileID: 1642772321}
   cursor: {fileID: 923659450}
   playSession: {fileID: 806036867}
@@ -8615,6 +8616,7 @@ GameObject:
   - component: {fileID: 2025432072}
   - component: {fileID: 2025432071}
   - component: {fileID: 2025432073}
+  - component: {fileID: 2025432074}
   m_Layer: 0
   m_Name: Chart
   m_TagString: Untagged
@@ -8664,6 +8666,19 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::ChartCatalog
   chartsSubfolder: Charts
   chartExtension: '*.json'
+--- !u!114 &2025432074
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2025432070}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: febf400c8df8c2b4bba6753c81a3bc85, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::AudioLoader
+  audioSubfolder: Audio
 --- !u!1 &2049791458
 GameObject:
   m_ObjectHideFlags: 0

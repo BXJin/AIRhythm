@@ -14,6 +14,7 @@ namespace AIRhythmServerApi.Services
         private readonly WorkerOptions _worker;
         private readonly WorkerRunner _workerRunner;
         private readonly ILogger<JobWorkerService> _logger;
+        private readonly LyriaRunner _lyria;
 
         public JobWorkerService(
             IJobQueue queue,
@@ -22,6 +23,7 @@ namespace AIRhythmServerApi.Services
             IOptions<StorageOptions> storage,
             IOptions<WorkerOptions> worker,
             WorkerRunner workerRunner,
+            LyriaRunner lyria,
             ILogger<JobWorkerService> logger)
         {
             _queue = queue;
@@ -30,6 +32,7 @@ namespace AIRhythmServerApi.Services
             _storage = storage.Value;
             _worker = worker.Value;
             _workerRunner = workerRunner;
+            _lyria = lyria;
             _logger = logger;
         }
 
@@ -59,11 +62,21 @@ namespace AIRhythmServerApi.Services
                     Directory.CreateDirectory(Path.GetDirectoryName(chartPath)!);
 
                     // MVP: 샘플 wav 복사 (나중에 Lyria2로 교체)
-                    var samplePath = Path.Combine(AppContext.BaseDirectory, "Samples", "sample.wav");
-                    if (!File.Exists(samplePath))
-                        throw new FileNotFoundException($"Sample WAV not found: {samplePath}");
+                    //var samplePath = Path.Combine(AppContext.BaseDirectory, "Samples", "sample.wav");
+                    //if (!File.Exists(samplePath))
+                    //    throw new FileNotFoundException($"Sample WAV not found: {samplePath}");
 
-                    File.Copy(samplePath, audioPath, overwrite: true);
+                    //File.Copy(samplePath, audioPath, overwrite: true);
+
+                    job.Progress = 0.15f;
+                    _jobs.Update(job);
+
+                    await _lyria.GenerateWavAsync(
+                        prompt: job.Prompt,
+                        genre: job.Genre,            // 너 Job에 있으면 사용, 없으면 null
+                        durationSec: job.DurationSec <= 0 ? 15 : job.DurationSec,
+                        outWavPath: audioPath,
+                        ct: stoppingToken);
 
                     job.Progress = 0.3f;
                     _jobs.Update(job);

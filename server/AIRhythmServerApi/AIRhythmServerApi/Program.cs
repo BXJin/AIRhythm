@@ -24,6 +24,8 @@ builder.Services.AddSingleton<IJobQueue, InMemoryJobQueue>();
 builder.Services.AddHostedService<JobWorkerService>();
 builder.Services.AddSingleton<WorkerRunner>();
 builder.Services.Configure<WorkerOptions>(builder.Configuration.GetSection("Worker"));
+builder.Services.AddSingleton<LyriaRunner>();
+builder.Services.Configure<LyriaOptions>(builder.Configuration.GetSection("Lyria"));
 
 var app = builder.Build();
 

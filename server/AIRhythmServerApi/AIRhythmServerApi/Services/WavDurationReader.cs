@@ -4,8 +4,6 @@ namespace AIRhythmServerApi.Services;
 
 public static class WavDurationReader
 {
-    // RIFF(WAVE) + fmt + data 기반 duration 계산
-    // byteRate와 dataSize로 duration_ms = dataSize / byteRate
     public static int GetDurationMs(string wavPath)
     {
         using var fs = File.OpenRead(wavPath);
@@ -27,16 +25,24 @@ public static class WavDurationReader
             var chunkId = new string(br.ReadChars(4));
             uint chunkSize = br.ReadUInt32();
 
-            // 깨진 파일/비정상 chunkSize 방어: 남은 길이보다 크면 중단
             long remaining = fs.Length - fs.Position;
+            
+            // ✅ 비정상 크기 처리: 남은 크기로 제한
             if (chunkSize > remaining)
             {
-                throw new InvalidDataException($"Invalid WAV chunk size: {chunkId} size={chunkSize} remaining={remaining}");
+                // data 청크인 경우 실제 남은 크기를 사용
+                if (chunkId == "data")
+                {
+                    dataSize = (uint)remaining;
+                    break; // data 청크가 마지막이라고 가정
+                }
+                
+                // 다른 청크는 스킵하고 종료
+                break;
             }
 
             if (chunkId == "fmt ")
             {
-                // fmt chunk 최소 16바イト는 있어야 함
                 if (chunkSize < 16)
                     throw new InvalidDataException("Invalid fmt chunk (too small).");
 
@@ -47,7 +53,6 @@ public static class WavDurationReader
                 br.ReadUInt16(); // blockAlign
                 br.ReadUInt16(); // bitsPerSample
 
-                // fmt chunk가 16보다 길면 남은 바이트는 Seek로 스킵
                 long extra = (long)chunkSize - 16;
                 if (extra > 0)
                     fs.Seek(extra, SeekOrigin.Current);
@@ -55,17 +60,13 @@ public static class WavDurationReader
             else if (chunkId == "data")
             {
                 dataSize = chunkSize;
-
-                // ❗ 핵심 패치: data 청크를 메모리에 읽지 말고 파일 포인터만 이동
-                fs.Seek(chunkSize, SeekOrigin.Current);
+                fs.Seek(Math.Min(chunkSize, remaining), SeekOrigin.Current); // ✅ 안전하게 Seek
             }
             else
             {
-                // 다른 청크도 메모리 읽기 대신 Seek로 스킵
-                fs.Seek(chunkSize, SeekOrigin.Current);
+                fs.Seek(Math.Min(chunkSize, remaining), SeekOrigin.Current); // ✅ 안전하게 Seek
             }
 
-            // chunk는 짝수 정렬 패딩이 있을 수 있음
             if ((chunkSize & 1) == 1 && fs.Position < fs.Length)
                 fs.Seek(1, SeekOrigin.Current);
 
